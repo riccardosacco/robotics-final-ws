@@ -24,7 +24,7 @@ This guide provides step-by-step instructions for installing the RoboMaster Simu
 #### Troubleshooting
 
 - If you encounter any permission errors, please authorize coppeliaSim in the System Settings:
-  ![CoppeliaSim settings](https://www.icorsi.ch/draftfile.php/646215/user/draft/256848284/coppelia_settings.png)
+  ![CoppeliaSim settings](images/coppelia_settings.png)
 
 ### Ubuntu
 
@@ -54,7 +54,6 @@ We prepared a Pixi project for you with all required dependencies for using the 
 git clone git@github.com:idsia-robotics/robotics-lab-usi-robomaster.git --recursive
 ```
 
-Follow the CoppeliaSim Installation Guide to setup CoppeliaSim on your computer.
 **Ubuntu:** You need to customize the `COPPELIASIM_ROOT_DIR` in the `pixi.toml` of this repo to point to your CoppeliaSim installation.
 
 Now enter the repository, compile and install the packages:
