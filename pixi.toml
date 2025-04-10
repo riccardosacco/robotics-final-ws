@@ -34,6 +34,9 @@ ros-humble-joint-state-publisher = ">=2.3.0,<3"
 ros-humble-joint-state-publisher-gui = ">=2.3.0,<3"
 ros-humble-joy = ">=3.1.0,<4"
 
+# robomaster_example dependencies
+transforms3d = ">=0.4.2,<0.5"
+
 [pypi-dependencies]
 # RoboMasterSDK
 robomaster = { git = "https://github.com/jeguzzi/RoboMaster-SDK.git" }
