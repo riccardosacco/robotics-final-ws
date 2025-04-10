@@ -10,6 +10,6 @@
 
 [submodule "src/simExtROS2"]
 	path = src/simExtROS2
-	url = git@github.com:jeguzzi/simExtROS2.git
+	url = git@github.com:EliaCereda/simExtROS2.git
 	branch = "iron-4.6"
 
