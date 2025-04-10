@@ -1,7 +1,7 @@
 [workspace]
 authors = ["Elia Cereda <eliacereda@gmail.com>"]
 channels = ["robostack-staging", "conda-forge"]
-name = "robotics_robomaster_lab"
+name = "robotics-lab-usi-robomaster"
 platforms = ["linux-64", "osx-64", "osx-arm64"]
 version = "0.1.0"
 
@@ -50,10 +50,8 @@ ROS_LOCALHOST_ONLY="1"
 
 COPPELIASIM_ROOT_DIR="/Applications/coppeliaSim.app/Contents/Resources"
 
+# CMake toolchain file to use only Pixi libraries in the build process
 CMAKE_TOOLCHAIN_FILE="$PIXI_PROJECT_ROOT/pixi-toolchain.cmake"
-
-# FIXME: update libmedia_codec
-CMAKE_POLICY_VERSION_MINIMUM = "3.5"
 
 [target.osx-64.tasks]
 coppelia = "$COPPELIASIM_ROOT_DIR/../MacOS/coppeliaSim"
