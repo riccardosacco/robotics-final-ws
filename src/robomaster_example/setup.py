@@ -14,7 +14,7 @@ setup(
         
         ## NOTE: you must add this line to use launch files
         # Instruct colcon to copy launch files during package build 
-        ('share/' + package_name + '/launch', glob('launch/*.launch.*'))
+        ('share/' + package_name + '/launch', glob('launch/*.launch'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
