@@ -209,7 +209,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libogg-1.3.5-h4ab18f5_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libopenblas-0.3.29-pthreads_h94d23a6_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libopencv-4.6.0-py310h8149549_8.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/libopus-1.4-hd0c01bc_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/libopus-1.5.2-hd0c01bc_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libpciaccess-0.18-hd590300_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libpng-1.6.43-h2797004_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libpq-15.3-hbcd7760_1.conda
@@ -626,8 +626,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/toml-0.10.2-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-2.2.1-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/transforms3d-0.4.2-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.1-hf5ce1d7_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.1-pyh29332c3_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.2-h0e9735f_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.2-pyh29332c3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/uncrustify-0.74.0-h27087fc_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/unicodedata2-16.0.0-py310ha75aee5_0.conda
@@ -678,8 +678,8 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ec/ce/5ff57cde76feaa193978a28097edbb1c649e1f439182649eb9ecc7b86a03/MyQR-2.3.1.zip
       - pypi: https://files.pythonhosted.org/packages/12/cc/f4fe2c7ce68b92cbf5b2d379ca366e1edae38cccaad00f69f529b460c3ef/netaddr-1.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d6/c0/96b62616291161fab35622df7ecf85496d2f477c3b69c659ab8d45fe1301/numpy_quaternion-2024.0.8-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
-      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
       - pypi: https://files.pythonhosted.org/packages/de/3c/c96d904b9892beec978562f64d8cc43f9cca0842e65bd3cd1b7f7389b0ba/scipy-1.15.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.6.1-pyhd8ed1ab_0.conda
@@ -853,7 +853,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libogg-1.3.5-hfdf4475_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libopenblas-0.3.29-openmp_hbf64a52_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libopencv-4.6.0-py310h557c7f5_8.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/libopus-1.4-he3325bb_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/libopus-1.5.2-he3325bb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libpng-1.6.43-h92b6c6a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libpq-15.3-h9dc22bb_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libprotobuf-3.21.12-h7d26f99_2.conda
@@ -1254,8 +1254,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/toml-0.10.2-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-2.2.1-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/transforms3d-0.4.2-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.1-hf5ce1d7_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.1-pyh29332c3_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.2-h0e9735f_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.2-pyh29332c3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/uncrustify-0.74.0-h96cf925_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/unicodedata2-16.0.0-py310hbb8c376_0.conda
@@ -1296,8 +1296,8 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ec/ce/5ff57cde76feaa193978a28097edbb1c649e1f439182649eb9ecc7b86a03/MyQR-2.3.1.zip
       - pypi: https://files.pythonhosted.org/packages/12/cc/f4fe2c7ce68b92cbf5b2d379ca366e1edae38cccaad00f69f529b460c3ef/netaddr-1.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/13/9b/8d68ce72458f66e9e2db6a8112329e7b85cf6afa52d309f52b59f1437e4c/numpy_quaternion-2024.0.8-cp310-cp310-macosx_10_9_x86_64.whl
-      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
-      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
       - pypi: https://files.pythonhosted.org/packages/95/df/ef233fff6838fe6f7840d69b5ef9f20d2b5c912a8727b21ebf876cb15d54/scipy-1.15.2-cp310-cp310-macosx_10_13_x86_64.whl
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.6.1-pyhd8ed1ab_0.conda
@@ -1479,7 +1479,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libogg-1.3.5-h99b78c6_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopenblas-0.3.29-openmp_hf332438_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopencv-4.6.0-py310h57eab40_8.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopus-1.4-h48c0fde_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopus-1.5.2-h48c0fde_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libpng-1.6.43-h091b4b1_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libpq-15.3-h7126958_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libprotobuf-3.21.12-ha614eb4_2.conda
@@ -1884,8 +1884,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/toml-0.10.2-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-2.2.1-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/transforms3d-0.4.2-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.1-hf5ce1d7_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.1-pyh29332c3_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.2-h0e9735f_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.2-pyh29332c3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/uncrustify-0.74.0-h6b3803e_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/unicodedata2-16.0.0-py310h078409c_0.conda
@@ -1926,8 +1926,8 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ec/ce/5ff57cde76feaa193978a28097edbb1c649e1f439182649eb9ecc7b86a03/MyQR-2.3.1.zip
       - pypi: https://files.pythonhosted.org/packages/12/cc/f4fe2c7ce68b92cbf5b2d379ca366e1edae38cccaad00f69f529b460c3ef/netaddr-1.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/5d/a1/054e48212b1769c093363c571008b6999af30e86746434389e36dcb9d9cf/numpy_quaternion-2024.0.8-cp310-cp310-macosx_11_0_arm64.whl
-      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
-      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
       - pypi: https://files.pythonhosted.org/packages/5c/20/acdd4efb8a68b842968f7bc5611b1aeb819794508771ad104de418701422/scipy-1.15.2-cp310-cp310-macosx_12_0_arm64.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
@@ -7642,7 +7642,7 @@ packages:
   purls: []
   size: 116150
   timestamp: 1743771410133
-- pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+- pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
   name: libmedia-codec
   version: 0.0.1
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libnetcdf-4.8.1-nompi_h261ec11_106.tar.bz2
@@ -7921,37 +7921,34 @@ packages:
   - pkg:pypi/opencv-python?source=hash-mapping
   size: 15377616
   timestamp: 1671410027790
-- conda: https://conda.anaconda.org/conda-forge/linux-64/libopus-1.4-hd0c01bc_0.conda
-  sha256: cbbd510f5c7239635ea8559d2b3801df4243569f28285dd5475bd121217a5494
-  md5: 9b8364120a0fb8520e288ef743ff4f27
+- conda: https://conda.anaconda.org/conda-forge/linux-64/libopus-1.5.2-hd0c01bc_0.conda
+  sha256: 786d43678d6d1dc5f88a6bad2d02830cfd5a0184e84a8caa45694049f0e3ea5f
+  md5: b64523fb87ac6f87f0790f324ad43046
   depends:
-  - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  - __glibc >=2.17,<3.0.a0
   license: BSD-3-Clause
-  license_family: BSD
   purls: []
-  size: 290450
-  timestamp: 1744126066555
-- conda: https://conda.anaconda.org/conda-forge/osx-64/libopus-1.4-he3325bb_0.conda
-  sha256: f5c0854aa80c6c90502475b09c0e6e18cfb972180d6c608bf389442b9872fbf9
-  md5: 5dcaab34f086541abe1343dc77b103c3
+  size: 312472
+  timestamp: 1744330953241
+- conda: https://conda.anaconda.org/conda-forge/osx-64/libopus-1.5.2-he3325bb_0.conda
+  sha256: 1ca09dddde2f1b7bab1a8b1e546910be02e32238ebaa2f19e50e443b17d0660f
+  md5: dd0f9f16dfae1d1518312110051586f6
   depends:
   - __osx >=10.13
   license: BSD-3-Clause
-  license_family: BSD
   purls: []
-  size: 308067
-  timestamp: 1744126112894
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopus-1.4-h48c0fde_0.conda
-  sha256: a51ff090a4339f52c800d8a1ddd0741aa3695caadcff72b97afcf4fda0be87f3
-  md5: c4ba3f67f2f375aae7b15077306f4895
+  size: 331776
+  timestamp: 1744331054952
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopus-1.5.2-h48c0fde_0.conda
+  sha256: 3a01094a59dd59d7a5a1c8e838c2ef3fccf9e098af575c38c26fceb56c6bb917
+  md5: 882feb9903f31dca2942796a360d1007
   depends:
   - __osx >=11.0
   license: BSD-3-Clause
-  license_family: BSD
   purls: []
-  size: 282261
-  timestamp: 1744126118276
+  size: 299498
+  timestamp: 1744330988108
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libpciaccess-0.18-hd590300_0.conda
   sha256: c0a30ac74eba66ea76a4f0a39acc7833f5ed783a632ca3bb6665b2d81aabd2fb
   md5: 48f4330bfcd959c3cfb704d424903c82
@@ -11262,7 +11259,7 @@ packages:
   purls: []
   size: 176444
   timestamp: 1693427792263
-- pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+- pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-2#140ed00ab1f6c386cac0766020a5dae031d3d952
   name: robomaster
   version: 0.1.1.65
   requires_dist:
@@ -27942,28 +27939,26 @@ packages:
   - pkg:pypi/transforms3d?source=hash-mapping
   size: 2690384
   timestamp: 1734511238605
-- conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.1-hf5ce1d7_0.conda
-  sha256: f38c8a4cb27155a3c0d2853683569b1b1b38b31aa17195c23789367868d2125e
-  md5: e37cf790f710cf72fd13dcb6b2d4370c
+- conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.13.2-h0e9735f_0.conda
+  sha256: 4865fce0897d3cb0ffc8998219157a8325f6011c136e6fd740a9a6b169419296
+  md5: 568ed1300869dca0ba09fb750cda5dbb
   depends:
-  - typing_extensions ==4.13.1 pyh29332c3_0
+  - typing_extensions ==4.13.2 pyh29332c3_0
   license: PSF-2.0
-  license_family: PSF
   purls: []
-  size: 89685
-  timestamp: 1743820059977
-- conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.1-pyh29332c3_0.conda
-  sha256: 78a5efbf86eca68b5f9e58f0dc7e56dcfa96d1dcba5c7f5f37d2c0444de22085
-  md5: 5710c79a5fb0a6bfdba0a887f90583b1
+  size: 89900
+  timestamp: 1744302253997
+- conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.13.2-pyh29332c3_0.conda
+  sha256: a8aaf351e6461de0d5d47e4911257e25eec2fa409d71f3b643bb2f748bde1c08
+  md5: 83fc6ae00127671e301c9f44254c31b8
   depends:
   - python >=3.9
   - python
   license: PSF-2.0
-  license_family: PSF
   purls:
   - pkg:pypi/typing-extensions?source=compressed-mapping
-  size: 52170
-  timestamp: 1743820059977
+  size: 52189
+  timestamp: 1744302253997
 - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
   sha256: 5aaa366385d716557e365f0a4e9c3fca43ba196872abbbe3d56bb610d131e192
   md5: 4222072737ccff51314b5ece9c7d6f5a
