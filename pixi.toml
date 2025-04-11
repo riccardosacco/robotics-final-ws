@@ -39,8 +39,8 @@ transforms3d = ">=0.4.2,<0.5"
 
 [pypi-dependencies]
 # RoboMasterSDK
-robomaster = { git = "https://github.com/jeguzzi/RoboMaster-SDK.git" }
-libmedia_codec = { git = "https://github.com/jeguzzi/RoboMaster-SDK.git", subdirectory = "lib/libmedia_codec"}
+robomaster = { git = "https://github.com/EliaCereda/RoboMaster-SDK.git", branch = "patch-1" }
+libmedia_codec = { git = "https://github.com/EliaCereda/RoboMaster-SDK.git", branch = "patch-1", subdirectory = "lib/libmedia_codec"}
 
 # robomaster_ros dependencies
 numpy-quaternion = ">=2024.0.8, <2025"

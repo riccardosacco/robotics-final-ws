@@ -656,8 +656,8 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ec/ce/5ff57cde76feaa193978a28097edbb1c649e1f439182649eb9ecc7b86a03/MyQR-2.3.1.zip
       - pypi: https://files.pythonhosted.org/packages/12/cc/f4fe2c7ce68b92cbf5b2d379ca366e1edae38cccaad00f69f529b460c3ef/netaddr-1.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d6/c0/96b62616291161fab35622df7ecf85496d2f477c3b69c659ab8d45fe1301/numpy_quaternion-2024.0.8-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
-      - pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
       - pypi: https://files.pythonhosted.org/packages/de/3c/c96d904b9892beec978562f64d8cc43f9cca0842e65bd3cd1b7f7389b0ba/scipy-1.15.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.6.1-pyhd8ed1ab_0.conda
@@ -1246,8 +1246,8 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ec/ce/5ff57cde76feaa193978a28097edbb1c649e1f439182649eb9ecc7b86a03/MyQR-2.3.1.zip
       - pypi: https://files.pythonhosted.org/packages/12/cc/f4fe2c7ce68b92cbf5b2d379ca366e1edae38cccaad00f69f529b460c3ef/netaddr-1.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/13/9b/8d68ce72458f66e9e2db6a8112329e7b85cf6afa52d309f52b59f1437e4c/numpy_quaternion-2024.0.8-cp310-cp310-macosx_10_9_x86_64.whl
-      - pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
-      - pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
       - pypi: https://files.pythonhosted.org/packages/95/df/ef233fff6838fe6f7840d69b5ef9f20d2b5c912a8727b21ebf876cb15d54/scipy-1.15.2-cp310-cp310-macosx_10_13_x86_64.whl
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/aiohappyeyeballs-2.6.1-pyhd8ed1ab_0.conda
@@ -1848,8 +1848,8 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/ec/ce/5ff57cde76feaa193978a28097edbb1c649e1f439182649eb9ecc7b86a03/MyQR-2.3.1.zip
       - pypi: https://files.pythonhosted.org/packages/12/cc/f4fe2c7ce68b92cbf5b2d379ca366e1edae38cccaad00f69f529b460c3ef/netaddr-1.3.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/5d/a1/054e48212b1769c093363c571008b6999af30e86746434389e36dcb9d9cf/numpy_quaternion-2024.0.8-cp310-cp310-macosx_11_0_arm64.whl
-      - pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
-      - pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
+      - pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
       - pypi: https://files.pythonhosted.org/packages/5c/20/acdd4efb8a68b842968f7bc5611b1aeb819794508771ad104de418701422/scipy-1.15.2-cp310-cp310-macosx_12_0_arm64.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
@@ -6754,7 +6754,7 @@ packages:
   purls: []
   size: 116150
   timestamp: 1743771410133
-- pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
+- pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?subdirectory=lib%2Flibmedia_codec&branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
   name: libmedia-codec
   version: 0.0.1
 - conda: https://conda.anaconda.org/conda-forge/linux-64/libnetcdf-4.8.1-nompi_h261ec11_106.tar.bz2
@@ -10239,7 +10239,7 @@ packages:
   purls: []
   size: 176444
   timestamp: 1693427792263
-- pypi: git+https://github.com/jeguzzi/RoboMaster-SDK.git#2f3bb63e8d7002520a4c23f4de4bfb918081ced0
+- pypi: git+https://github.com/EliaCereda/RoboMaster-SDK.git?branch=patch-1#95fa5e4fe58f9828ca7214402d5a9e0f67cd0414
   name: robomaster
   version: 0.1.1.65
   requires_dist:
