@@ -5,7 +5,7 @@
 
 [submodule "src/robomaster_ros"]
 	path = src/robomaster_ros
-	url = git@github.com:jeguzzi/robomaster_ros.git
+	url = git@github.com:EliaCereda/robomaster_ros.git
 	branch = "main"
 
 [submodule "src/simExtROS2"]
