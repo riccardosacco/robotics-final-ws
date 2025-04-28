@@ -71,6 +71,9 @@ You can launch CoppeliaSim with this command. This is important to ensure that C
 pixi run coppelia
 ```
 
+#### Troubleshooting
+- **macOS 15:** The latest update introduced stricter controls on local network access, which the RoboMaster ROS driver needs to communicate with the RoboMaster model in Coppelia. If communication fail with `ERROR conn.py:107 scan_robot_ip: exception timed out`, please check that your terminal app (e.g. Terminal, iTerm, Visual Studio Code) is authorized to access the local network. Go in System Settings.app -> Privacy & Security -> Local Network and add / enable your terminal app.
+
 ---
 
 Your installation is complete! 🎉
