@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Launch arguments -->
+  <arg name="name" default="rm0" description="Robot namespace"/>
+  <arg name="use_sim_time" default="true" description="Use simulation time if true"/>
+
+  <!-- Launch the explorer node -->
+  <node pkg="explorer" 
+        exec="explorer_node" 
+        name="explorer_node"
+        namespace="$(var name)"
+        output="screen">
+    <param name="use_sim_time" value="$(var use_sim_time)"/>
+    <param name="robot_name" value="robomaster"/>
+    <param name="cmd_vel_topic" value="/cmd_vel"/>
+    <param name="scan_topic" value="/scan"/>
+    <param name="vision_topic" value="/vision"/>
+    <param name="odom_topic" value="/odom"/>
+  </node>
+</launch>
