@@ -1,174 +1,426 @@
+#!/usr/bin/env python3
+"""
+ROS2 Robot Controller for Fire Detection and Navigation
+
+A unified controller that combines basic robot control with fire detection capabilities.
+Features:
+1. Basic movement control and odometry processing
+2. Autonomous navigation using range sensors
+3. Fire detection using computer vision
+4. State machine for behavior control
+5. Celebration dance when fire is found
+"""
+
 import rclpy
 from rclpy.node import Node
-
-from controller import ControllerNode
-
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Range
-
-from copy import deepcopy
+from geometry_msgs.msg import Twist, Pose, Vector3
+from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Range, Image
+from cv_bridge import CvBridge
+import cv2
+import numpy as np
 from enum import Enum
-from math import sin, cos, inf
+from math import inf
 import random
+from std_msgs.msg import String, ColorRGBA
+import math
 import sys
+import time
+from transforms3d._gohlketransforms import euler_from_quaternion
+from typing import Tuple, Dict, List
 
 
-class RMState(Enum):
-    # Initially, move straight until the robot reaches an obstacle
-    FORWARD = 1
-    # Check if the robot didn't stop fast enough and hit the obstacle
-    BACKUP = 2
-    #  Rotate in a random direction until the robot is clear from obstacles
-    ROTATING = 3
+class RobotState(Enum):
+    """Robot states for behavior control."""
+    FORWARD = 1     # Move straight until obstacle
+    BACKUP = 2      # Back up if too close
+    ROTATING = 3    # Rotate to find clear path
+    FIRE_FOUND = 4  # Fire detected, stop and report
+    CELEBRATING = 5 # Do celebration dance
 
 
-class ExploreController(ControllerNode):
-    # Period of the update timer, set based on update frequencies of proximity sensors (10Hz) and odom (20Hz)
-    UPDATE_STEP = 1 / 20
+class RobotController(Node):
+    """
+    Unified robot controller with fire detection and navigation capabilities.
+    
+    Combines basic movement control with advanced behaviors for:
+    - Autonomous navigation
+    - Obstacle avoidance
+    - Fire detection
+    - Celebration sequences
+    """
+    
+    # Robot control parameters
+    UPDATE_RATE = 20  # Hz
+    OUT_OF_RANGE = 10.0   # Maximum sensor range [m]
+    TARGET_DISTANCE = 0.3  # Desired distance from obstacles [m]
+    TOO_CLOSE = 0.2       # Distance that triggers backup [m]
+    MIN_FREE_SPACE = 0.5  # Minimum space needed to move forward [m]
+    
+    # Fire detection thresholds (HSV color space)
+    FIRE_LOWER = np.array([15, 100, 100])   # Yellow-orange lower bound
+    FIRE_UPPER = np.array([40, 255, 255])   # Yellow-orange upper bound
+    FIRE_MIN_AREA = 12000                   # Minimum fire size in pixels
 
-    # Max range of the Thymio's proximity sensors
-    OUT_OF_RANGE = 10.0
-
-    # Target distance of the robot from the wall at the end of FORWARD
-    TARGET_DISTANCE = 0.3
-
-    # Minimum distance from the wall to be able to rotate in place
-    TOO_CLOSE = 0.2
-
-    # Minimum distance from the wall to be able to move forward
-    MIN_FREE_SPACE = 0.5
-
-    # Target difference between the distance measured by the two distance sensors
-    TARGET_ERROR = 0.01
-
-    def __init__(self):
-        super().__init__("explore_controller", update_step=self.UPDATE_STEP)
-
-        # Initialize the state machine
+    def __init__(self, node_name: str = "robot_controller"):
+        """Initialize the robot controller with all necessary components."""
+        super().__init__(node_name)
+        
+        # Robot state
+        self.odom_pose: Pose = None
+        self.odom_velocity: Twist = None
         self.current_state = None
-        self.next_state = RMState.FORWARD
+        self.next_state = RobotState.FORWARD
+        
+        # Fire detection state
+        self.fire_detected = False
+        self.celebration_start_time = None
+        self.ignore_fire_detection = False
+        
+        # Vision processing
+        self.cv_bridge = CvBridge()
+        
+        # Setup ROS2 communication
+        self._setup_core_components()
+        self._setup_camera()
+        self._setup_range_sensors()
+        
+    def _setup_core_components(self):
+        """Set up basic movement control and odometry."""
+        # Movement control
+        self.vel_publisher = self.create_publisher(Twist, "cmd_vel", 10)
+        
+        # Odometry for position tracking
+        self.odom_subscriber = self.create_subscription(
+            Odometry, 
+            "odom",
+            self._on_odometry, 
+            10
+        )
 
-        # Subscribe to all proximity sensors at the same time
-        self.sensor_names = {
+    def _setup_camera(self):
+        """Set up camera and vision processing components."""
+        # Camera input
+        self.camera_sub = self.create_subscription(
+            Image,
+            'camera/image_color',
+            self._on_camera_image,
+            10
+        )
+        
+        # Debug visualization
+        self.debug_image_pub = self.create_publisher(Image, 'fire_debug/image', 10)
+        self.mask_pub = self.create_publisher(Image, 'fire_debug/mask', 10)
+
+    def _setup_range_sensors(self):
+        """Set up range sensors for obstacle detection."""
+        # Sensor configuration
+        self.sensors: Dict[str, str] = {
             "rear_right": "range_0",
             "front_right": "range_1",
             "rear_left": "range_2",
             "front_left": "range_3",
         }
-        # Subscribe to all proximity sensors at the same time
-        self.front_sensors = [self.sensor_names["front_left"], self.sensor_names["front_right"]]
-        self.rear_sensors = [self.sensor_names["rear_left"], self.sensor_names["rear_right"]]
-        self.range_sensors = self.front_sensors + self.rear_sensors
-        self.range_sensors_readings = dict()
-        self.range_sensors_subscribers = [
-            self.create_subscription(Range, f"{sensor}", self.create_range_sensors_callback(sensor), 10)
-            for sensor in self.range_sensors
+        
+        # Sensor grouping
+        self.front_sensors = [self.sensors["front_left"], self.sensors["front_right"]]
+        self.rear_sensors = [self.sensors["rear_left"], self.sensors["rear_right"]]
+        self.all_sensors = self.front_sensors + self.rear_sensors
+        
+        # Sensor data storage
+        self.range_readings: Dict[str, float] = {}
+        
+        # Create subscribers
+        self.range_subscribers = [
+            self.create_subscription(
+                Range, 
+                sensor, 
+                self._create_range_callback(sensor), 
+                10
+            )
+            for sensor in self.all_sensors
         ]
 
-    def create_range_sensors_callback(self, sensor):
-        # Create a callback function that has access to both the message and the name of the sensor that sent it
-        def proximity_callback(msg):
-            self.range_sensors_readings[sensor] = msg.range if msg.range >= 0.0 else inf
+        # Celebration dance publishers
+        self.arm_pub = self.create_publisher(Vector3, '/rm0/cmd_arm', 10)
+        self.sound_pub = self.create_publisher(String, '/rm0/cmd_sound', 10)
+        self.led_color_pub = self.create_publisher(ColorRGBA, '/rm0/leds/color', 10)
+        self.led_eff_pub = self.create_publisher(String, '/rm0/leds/effect', 10)
 
+        # Dance step counter
+        self.dance_step = 0
+
+    def start(self):
+        """Start the control loop."""
+        period = 1.0 / self.UPDATE_RATE
+        self.timer = self.create_timer(period, self._control_loop)
+        self.get_logger().info("Robot controller started")
+
+    def stop(self):
+        """Stop the robot safely."""
+        self._send_velocity(0.0, 0.0)
+        self.get_logger().info("Robot controller stopped")
+
+    def _send_velocity(self, linear: float, angular: float):
+        """Send velocity command to the robot."""
+        cmd = Twist()
+        cmd.linear.x = linear
+        cmd.angular.z = angular
+        self.vel_publisher.publish(cmd)
+
+    def _on_odometry(self, msg: Odometry):
+        """Process odometry updates."""
+        self.odom_pose = msg.pose.pose
+        self.odom_velocity = msg.twist.twist
+        
+        # Convert to 2D pose for logging
+        x, y, theta = self._get_2d_pose()
+        self.get_logger().debug(
+            f"Position: x={x:.2f}, y={y:.2f}, θ={theta:.2f}",
+            throttle_duration_sec=0.5
+        )
+
+    def _get_2d_pose(self) -> Tuple[float, float, float]:
+        """Extract 2D pose from 3D odometry."""
+        if not self.odom_pose:
+            return (0.0, 0.0, 0.0)
+            
+        q = self.odom_pose.orientation
+        _, _, yaw = euler_from_quaternion([q.x, q.y, q.z, q.w])
+        
+        return (
+            self.odom_pose.position.x,
+            self.odom_pose.position.y,
+            yaw
+        )
+
+    def _create_range_callback(self, sensor: str):
+        """Create callback for range sensor updates."""
+        def _on_range(msg: Range):
+            self.range_readings[sensor] = msg.range if msg.range >= 0.0 else inf
             self.get_logger().debug(
-                f"proximity: {self.range_sensors_readings}",
-                throttle_duration_sec=0.5,  # Throttle logging frequency to max 2Hz
+                f"Range sensors: {self.range_readings}",
+                throttle_duration_sec=0.5
             )
+        return _on_range
 
-        return proximity_callback
-
-    def update_callback(self):
-        # Wait until the first update is received from odometry and each proximity sensor
-        if self.odom_pose is None or len(self.range_sensors_readings) < len(self.range_sensors):
+    def _on_camera_image(self, msg: Image):
+        """Process camera image for fire detection."""
+        if self.ignore_fire_detection:
             return
 
-        # Check whether the state machine was asked to transition to a new
-        # state in the previous timestep. In that case, call the initialization
-        # code for the new state.
+        try:
+            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+            fire_detected = self._detect_fire(cv_image)
+            
+            if fire_detected and not self.fire_detected:
+                if self.current_state != RobotState.CELEBRATING:
+                    self.get_logger().info("Fire detected!")
+                    self.fire_detected = True
+                    if self.current_state != RobotState.FIRE_FOUND:
+                        self.next_state = RobotState.FIRE_FOUND
+            elif not fire_detected:
+                self.fire_detected = False
+                
+        except Exception as e:
+            self.get_logger().error(f'Camera error: {e}')
+
+    def _detect_fire(self, image) -> bool:
+        """Detect fire in image using color segmentation."""
+        # Convert to HSV for better color detection
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, self.FIRE_LOWER, self.FIRE_UPPER)
+        
+        # Clean up mask
+        kernel = np.ones((5,5), np.uint8)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+        
+        # Find fire contours
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        # Create debug visualization
+        debug = image.copy()
+        cv2.drawContours(debug, contours, -1, (0,255,0), 2)
+        
+        # Check for large enough fire areas
+        for contour in contours:
+            area = cv2.contourArea(contour)
+            if area > self.FIRE_MIN_AREA:
+                x,y,w,h = cv2.boundingRect(contour)
+                cv2.rectangle(debug, (x,y), (x+w,y+h), (0,0,255), 2)
+                cv2.putText(debug, f'Fire: {area:.0f}px', (x, y-10), 
+                          cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 2)
+                
+                # Publish debug images
+                self.debug_image_pub.publish(self.cv_bridge.cv2_to_imgmsg(debug, "bgr8"))
+                self.mask_pub.publish(self.cv_bridge.cv2_to_imgmsg(mask, "mono8"))
+                return True
+                
+        return False
+
+    def _control_loop(self):
+        """Main control loop implementing the state machine."""
+        # Wait for sensor data
+        if not self._check_sensors_ready():
+            return
+
+        # Handle state transitions
         if self.next_state != self.current_state:
-            self.get_logger().info(f"state_machine: transitioning from {self.current_state} to {self.next_state}")
+            self._handle_state_transition()
 
-            if self.next_state == RMState.FORWARD:
-                self.init_forward()
-            elif self.next_state == RMState.BACKUP:
-                self.init_backup()
-            elif self.next_state == RMState.ROTATING:
-                self.init_rotating()
+        # Update current state
+        self._update_current_state()
 
-            self.current_state = self.next_state
+    def _check_sensors_ready(self) -> bool:
+        """Check if all sensors are providing data."""
+        return (self.odom_pose is not None and 
+                len(self.range_readings) == len(self.all_sensors))
 
-        # Call update code for the current state
-        if self.current_state == RMState.FORWARD:
-            self.update_forward()
-        elif self.current_state == RMState.BACKUP:
-            self.update_backup()
-        elif self.current_state == RMState.ROTATING:
-            self.update_rotating()
+    def _handle_state_transition(self):
+        """Handle transition between states."""
+        self.get_logger().info(f"State: {self.current_state} -> {self.next_state}")
+        
+        # Initialize new state
+        initializers = {
+            RobotState.FORWARD: self._init_forward,
+            RobotState.BACKUP: self._init_backup,
+            RobotState.ROTATING: self._init_rotating,
+            RobotState.FIRE_FOUND: self._init_fire_found,
+            RobotState.CELEBRATING: self._init_celebrating
+        }
+        
+        if self.next_state in initializers:
+            initializers[self.next_state]()
+            
+        self.current_state = self.next_state
 
-    def init_forward(self):
+    def _update_current_state(self):
+        """Execute current state behavior."""
+        updaters = {
+            RobotState.FORWARD: self._update_forward,
+            RobotState.BACKUP: self._update_backup,
+            RobotState.ROTATING: self._update_rotating,
+            RobotState.FIRE_FOUND: self._update_fire_found,
+            RobotState.CELEBRATING: self._update_celebrating
+        }
+        
+        if self.current_state in updaters:
+            updaters[self.current_state]()
+
+    # State initialization methods
+    def _init_forward(self):
+        """Start moving forward."""
         self.stop()
 
-    def update_forward(self):
-        # Check if the robot reached an obstacle it cannot pass through.
-        if any(self.range_sensors_readings[sensor] < self.TARGET_DISTANCE for sensor in self.front_sensors):
-            self.next_state = RMState.BACKUP
-            return
-
-        # Just move forward with constant velocity
-        cmd_vel = Twist()
-        cmd_vel.linear.x = 0.2  # [m/s]
-        cmd_vel.angular.z = 0.0  # [rad/s]
-        self.vel_publisher.publish(cmd_vel)
-
-    def init_backup(self):
+    def _init_backup(self):
+        """Start backing up."""
         self.stop()
 
-    def update_backup(self):
-        # Check if the robot didn't stop fast enough and hit the wall
-        if all(self.range_sensors_readings[sensor] > self.TOO_CLOSE for sensor in self.front_sensors):
-            self.next_state = RMState.ROTATING
-            return
-
-        # Slowly back up to clear the obstacle
-        cmd_vel = Twist()
-        cmd_vel.linear.x = -0.1  # [m/s]
-        cmd_vel.angular.z = 0.0  # [rad/s]
-        self.vel_publisher.publish(cmd_vel)
-
-    def init_rotating(self):
+    def _init_rotating(self):
+        """Start rotating to find path."""
         self.stop()
+        self.turn_direction = random.choice([-1, 1])
 
-        # Choose a random rotation direction to clear the obstacle
-        self.turn_direction = random.sample([-1, 1], 1)[0]
+    def _init_fire_found(self):
+        """React to fire detection."""
+        self.stop()
+        self.get_logger().info("Fire found! Starting celebration!")
+        self.ignore_fire_detection = True
+        self.celebration_start_time = time.time()
+        # Reset dance counter when fire is found
+        self.dance_step = 0
+        self.next_state = RobotState.CELEBRATING
 
-    def update_rotating(self):
-        if all(self.range_sensors_readings[sensor] >= self.MIN_FREE_SPACE for sensor in self.front_sensors):
-            self.next_state = RMState.FORWARD
+    def _init_celebrating(self):
+        """Start celebration sequence."""
+        self.get_logger().info("Starting celebration dance!")
+
+    # State update methods
+    def _update_forward(self):
+        """Move forward until obstacle detected."""
+        if any(self.range_readings[s] < self.TARGET_DISTANCE 
+               for s in self.front_sensors):
+            self.next_state = RobotState.BACKUP
             return
 
-        # Just rotate in place with constant velocity
-        cmd_vel = Twist()
-        cmd_vel.linear.x = 0.0  # [m/s]
-        cmd_vel.angular.z = self.turn_direction * 0.5  # [rad/s]
-        self.vel_publisher.publish(cmd_vel)
+        self._send_velocity(0.2, 0.0)
+
+    def _update_backup(self):
+        """Back up until safe distance reached."""
+        if all(self.range_readings[s] > self.TOO_CLOSE 
+               for s in self.front_sensors):
+            self.next_state = RobotState.ROTATING
+            return
+
+        self._send_velocity(-0.1, 0.0)
+
+    def _update_rotating(self):
+        """Rotate until clear path found."""
+        if all(self.range_readings[s] >= self.MIN_FREE_SPACE 
+               for s in self.front_sensors):
+            self.next_state = RobotState.FORWARD
+            return
+
+        self._send_velocity(0.0, self.turn_direction * 0.5)
+
+    def _update_fire_found(self):
+        """Transition to celebration."""
+        pass
+
+    def _update_celebrating(self):
+        """Perform celebration dance after fire detection."""
+        t = self.dance_step
+        twist = Twist()
+        arm = Vector3()
+        led_color = ColorRGBA()
+        eff = String()
+        # Play sound once at start
+        if t == 0:
+            sound = String()
+            sound.data = 'celebration_tune'
+            self.sound_pub.publish(sound)
+        # Alternate wheel spins every 5 steps
+        twist.angular.z = 1.0 if (t // 5) % 2 == 0 else -1.0
+        # Wave arm: up/down on z and left/right on y
+        pitch = 0.5 * math.sin((t % 6) * math.pi / 3)
+        yaw = 0.5 * math.cos((t % 6) * math.pi / 3)
+        arm.x = 0.0
+        arm.y = yaw
+        arm.z = pitch
+        # Flash LEDs red/green every 3 steps
+        if (t // 3) % 2 == 0:
+            led_color.r, led_color.g, led_color.b = 1.0, 0.0, 0.0
+        else:
+            led_color.r, led_color.g, led_color.b = 0.0, 1.0, 0.0
+        led_color.a = 1.0
+        eff.data = 'blink'
+        # Publish dance commands
+        self.vel_publisher.publish(twist)
+        self.arm_pub.publish(arm)
+        self.led_color_pub.publish(led_color)
+        self.led_eff_pub.publish(eff)
+        self.dance_step += 1
+        # End dance after 60 steps (~3s at 20Hz)
+        if self.dance_step >= 60:
+            self.stop()
+            self.next_state = None
 
 
 def main():
-    # Initialize the ROS client library
+    """Launch the robot controller."""
     rclpy.init(args=sys.argv)
-
-    # Create an instance of your node class
-    node = ExploreController()
-    node.start()
-
-    # Keep processings events until someone manually shuts down the node
+    
+    controller = RobotController()
+    controller.start()
+    
     try:
-        rclpy.spin(node)
+        rclpy.spin(controller)
     except KeyboardInterrupt:
         pass
-
-    # Ensure the Thymio is stopped before exiting
-    node.stop()
+    finally:
+        controller.stop()
+        rclpy.shutdown()
 
 
 if __name__ == "__main__":

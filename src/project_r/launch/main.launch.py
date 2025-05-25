@@ -10,7 +10,7 @@ def generate_launch_description():
             DeclareLaunchArgument("rm_name", default_value="rm0"),
             Node(
                 package="project_r",
-                executable="main",
+                executable="main_node",
                 namespace=LaunchConfiguration("rm_name"),
                 output="screen",
                 # Uncomment to enable DEBUG logging messages
