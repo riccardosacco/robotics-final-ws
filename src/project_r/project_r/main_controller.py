@@ -56,6 +56,10 @@ class RobotController(Node):
     TARGET_DISTANCE = 0.3  # Desired distance from obstacles [m]
     TOO_CLOSE = 0.2       # Distance that triggers backup [m]
     MIN_FREE_SPACE = 0.5  # Minimum space needed to move forward [m]
+    LINEAR_SPEED = 0.5 # Forward/backward speed for exploration [m/s]
+    ANGULAR_SPEED = 1.0  # Rotational speed for exploration [rad/s]
+    STUCK_TIME_THRESHOLD = 2.0       # seconds without movement to consider stuck
+    STUCK_DISTANCE_THRESHOLD = 0.05  # meters movement threshold
     
     # Fire detection thresholds (HSV color space)
     FIRE_LOWER = np.array([15, 100, 100])   # Yellow-orange lower bound
@@ -76,6 +80,10 @@ class RobotController(Node):
         self.fire_detected = False
         self.celebration_start_time = None
         self.ignore_fire_detection = False
+
+        # Stuck detection variables
+        self.last_pose: Tuple[float, float, float] = (0.0, 0.0, 0.0)
+        self.stuck_timer: float = 0.0
         
         # Vision processing
         self.cv_bridge = CvBridge()
@@ -312,6 +320,9 @@ class RobotController(Node):
     def _init_forward(self):
         """Start moving forward."""
         self.stop()
+        # Initialize stuck detection
+        self.last_pose = self._get_2d_pose()
+        self.stuck_timer = 0.0
 
     def _init_backup(self):
         """Start backing up."""
@@ -320,7 +331,18 @@ class RobotController(Node):
     def _init_rotating(self):
         """Start rotating to find path."""
         self.stop()
-        self.turn_direction = random.choice([-1, 1])
+        # Choose rotation direction based on available space
+        left_clearance = min(
+            self.range_readings.get(self.sensors["front_left"], 0),
+            self.range_readings.get(self.sensors["rear_left"], 0)
+        )
+        right_clearance = min(
+            self.range_readings.get(self.sensors["front_right"], 0),
+            self.range_readings.get(self.sensors["rear_right"], 0)
+        )
+        self.turn_direction = 1 if left_clearance > right_clearance else -1
+        # Random surfer: occasionally rotate faster (overshoot)
+        self.angular_speed_current = self.ANGULAR_SPEED
 
     def _init_fire_found(self):
         """React to fire detection."""
@@ -339,12 +361,25 @@ class RobotController(Node):
     # State update methods
     def _update_forward(self):
         """Move forward until obstacle detected."""
+        # Stuck detection: check odometry movement
+        x, y, _ = self._get_2d_pose()
+        last_x, last_y, _ = self.last_pose
+        if ((x - last_x)**2 + (y - last_y)**2)**0.5 < self.STUCK_DISTANCE_THRESHOLD:
+            self.stuck_timer += 1.0 / self.UPDATE_RATE
+        else:
+            self.stuck_timer = 0.0
+            self.last_pose = (x, y, _)
+        if self.stuck_timer >= self.STUCK_TIME_THRESHOLD:
+            self.get_logger().warning("Stuck detected, backing up")
+            self.next_state = RobotState.BACKUP
+            return
+
         if any(self.range_readings[s] < self.TARGET_DISTANCE 
                for s in self.front_sensors):
             self.next_state = RobotState.BACKUP
             return
 
-        self._send_velocity(0.2, 0.0)
+        self._send_velocity(self.LINEAR_SPEED, 0.0)
 
     def _update_backup(self):
         """Back up until safe distance reached."""
@@ -362,7 +397,7 @@ class RobotController(Node):
             self.next_state = RobotState.FORWARD
             return
 
-        self._send_velocity(0.0, self.turn_direction * 0.5)
+        self._send_velocity(0.0, self.turn_direction * self.angular_speed_current)
 
     def _update_fire_found(self):
         """Transition to celebration."""
