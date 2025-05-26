@@ -110,7 +110,7 @@ Apache License 2.0
 ## Authors
 
 - Riccardo Sacco (<riccardo.sacco@usi.ch>)
-- R. Kalvitis (<r.kalvitis@usi.ch>)
+- Roberts Kalvitis (<roberts.kalvitiss@usi.ch>)
 
 ## Acknowledgments
 
