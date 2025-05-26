@@ -1,109 +1,117 @@
-# RoboMaster Installation Guide
+# Project R: RoboMaster fire detection
 
-This guide provides step-by-step instructions for installing the RoboMaster Simulation running in CoppeliaSim using Pixi.
+A ROS2 package implementing autonomous navigation and fire detection for the RoboMaster robot. The robot autonomously explores its environment while avoiding obstacles and detects fires using computer vision.
 
----
+## Table of Contents
 
-## 🧩 Install CoppeliaSim
+- [Features](#features)
+- [Installation](#installation)
+- [Topics](#topics)
+  - [Subscribed Topics](#subscribed-topics)
+  - [Published Topics](#published-topics)
+- [Parameters](#parameters)
+- [Behavior States](#behavior-states)
+- [Debug Information](#debug-information)
+- [License](#license)
+- [Authors](#authors)
+- [Acknowledgments](#acknowledgments)
 
-### macOS
+## Features
 
-1. Download CoppeliaSim for [Apple Silicon](https://downloads.coppeliarobotics.com/V4_7_0_rev4/CoppeliaSim_Edu_V4_7_0_rev4_macOS14_arm64.zip) or [Intel](https://downloads.coppeliarobotics.com/V4_7_0_rev4/CoppeliaSim_Edu_V4_7_0_rev4_macOS13_x86_64.zip)
-2. Unzip and move to `/Applications/coppeliaSim.app`
-3. Right-click on `coppeliaSim.app` -> Open -> Open
-4. CoppeliaSim must be launched from the Terminal (this will become important later):
-   ```bash
-   /Applications/coppeliaSim.app/Contents/MacOS/coppeliaSim
-   ```
+- **Autonomous Navigation**: The robot explores the environment using range sensors for obstacle detection and avoidance
+- **Fire Detection**: Uses computer vision (OpenCV) to detect fires in real-time using color segmentation
+- **State Machine**: Implements different behavioral states for navigation and celebration
+- **Debug Visualization**: Provides visual feedback for fire detection through debug image topics
 
-#### Troubleshooting
+## Installation
 
-- If you encounter any permission errors, please authorize coppeliaSim in the System Settings:
-  ![CoppeliaSim settings](images/coppelia_settings.png)
-
-### Ubuntu
-
-1. Download CoppeliaSim for [Ubuntu 22.04](https://downloads.coppeliarobotics.com/V4_7_0_rev4/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu22_04.tar.xz) or [Ubuntu 24.04](https://downloads.coppeliarobotics.com/V4_7_0_rev4/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu24_04.tar.xz)
-2. Extract CoppeliaSim in a directory of your choice, for example in your `COURSE_FOLDER`:
-   ```bash
-   cd <COURSE_FOLDER>
-   tar xvf CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu<UBUNTU_VERSION>.tar.xz
-   ```
-3. CoppeliaSim must be launched from the Terminal (this will become important later):
-   ```bash
-   <PATH_TO_COPPELIA>/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu<UBUNTU_VERSION>/coppeliaSim.sh
-   ```
-
----
-
-## 🤖 RoboMaster setup
-
-We prepared a Pixi project for you with all required dependencies for using the RoboMaster in CoppeliaSim. You can set it up by cloning this repository:
+1. Clone this repository:
 
 ```bash
-git clone git@github.com:idsia-robotics/robotics-lab-usi-robomaster.git --recursive
+git clone https://github.com/riccardosacco/robotics-final-ws.git --recursive
+cd robotics-final-ws
 ```
 
-**Ubuntu:** You need to customize the `COPPELIASIM_ROOT_DIR` in the `pixi.toml` of this repo to point to your CoppeliaSim installation.
-
-Now enter the repository, compile and install the packages:
+2. Build the workspace:
 
 ```bash
-cd robotics-lab-usi-robomaster
 pixi install
 pixi shell
 colcon build --symlink-install
 ```
 
-You can launch CoppeliaSim with this command. This is important to ensure that Coppelia is started with the correct environment variables to see the ROS packages installed in this repo:
+3. Run Coppelia:
 
 ```bash
 source install/setup.zsh
 pixi run coppelia
 ```
 
-## ✅ Test your installation
+4. Load one of the scenes from the folder "src/project_r/scenes" into Coppelia
 
-1. Open CoppeliaSim.
-2. Add a RoboMaster to the scene via: `Model browser (the left sidebar) -> robots -> mobile -> RoboMasterEP`
-3. Press play and ensure no errors are printed in the Coppelia log (Bottom).
-
-With CoppeliaSim running and a Robomaster in the scene, run:
-
-```bash
-cd src/robomaster_sim/examples
-pixi shell
-python discover.py
-```
-This script should find the RoboMaster in the scene, print some info about it, and close itself.
-
-#### Troubleshooting
-- **macOS 15:** This macOS update introduced stricter controls on local network access, which the RoboMaster ROS driver needs to communicate with the RoboMaster model in Coppelia. If communication fail with `ERROR conn.py:107 scan_robot_ip: exception timed out`, please check that your terminal app (e.g. Terminal, iTerm, Visual Studio Code) is authorized to access the local network. Go in System Settings.app -> Privacy & Security -> Local Network and add / enable your terminal app.
-
-## 🚀 Run
-
-You're ready to start using your simulated RoboMaster. While the simulation is running as described in the previous step, launch the RoboMaster ROS driver:
+5. Run the RoboMaster EP ToF driver:
 
 ```bash
 source install/setup.zsh
-ros2 launch robomaster_ros ep.launch
+ros2 launch project_r ep_tof.launch.py
 ```
 
-In another terminal, inside the `<ROS_PROJECT_FOLDER>`.
+6. Run the Robot controller:
 
 ```bash
-pixi shell
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.5}}"
+source install/setup.zsh
+ros2 launch project_r main.launch.py
 ```
 
-The robot should start to rotate counter-clockwise.
+## Topics
 
-Use this command to stop it:
+### Subscribed Topics
+
+- `/odom` (nav_msgs/Odometry): Robot odometry
+- `/camera/image_color` (sensor_msgs/Image): Camera feed for fire detection
+- `/range_[0-3]` (sensor_msgs/Range): Range sensor readings
+
+### Published Topics
+
+- `/cmd_vel` (geometry_msgs/Twist): Robot velocity commands
+- `/fire_debug/image` (sensor_msgs/Image): Debug visualization with detected fire regions
+- `/fire_debug/mask` (sensor_msgs/Image): Fire detection mask
+
+## Parameters
+
+- `UPDATE_RATE`: Control loop frequency (default: 20 Hz)
+- `TARGET_DISTANCE`: Desired distance from obstacles (default: 0.3 m)
+- `TOO_CLOSE`: Distance that triggers backup (default: 0.2 m)
+- `MIN_FREE_SPACE`: Minimum space needed to move forward (default: 0.5 m)
+- `FIRE_MIN_AREA`: Minimum pixel area for fire detection (default: 12000)
+
+## Behavior States
+
+1. **FORWARD**: Robot moves straight until detecting an obstacle
+2. **BACKUP**: Robot backs up when too close to obstacles
+3. **ROTATING**: Robot rotates to find a clear path
+4. **FIRE_FOUND**: Robot stops when fire is detected
+5. **CELEBRATING**: Robot performs a victory dance
+
+## Debug Information
+
+To view the fire detection debug images:
 
 ```bash
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+rqt
 ```
 
----
+Then select either `/fire_debug/image` or `/fire_debug/mask` topics.
 
-Your installation is complete! 🎉
+## License
+
+Apache License 2.0
+
+## Authors
+
+- Riccardo Sacco (<riccardo.sacco@usi.ch>)
+- R. Kalvitis (<r.kalvitis@usi.ch>)
+
+## Acknowledgments
+
+This project was developed as part of the Robotics course at USI (Università della Svizzera italiana).
